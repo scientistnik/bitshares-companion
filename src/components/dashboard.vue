@@ -220,7 +220,6 @@ export default {
       let res = await this.$root.$data.api.init_promise;
       let operation = await Operations.generate(
         this.$data.incoming,
-        this.$root.$data.api,
         this.$root.$data.wallet.accountID
       );
       console.log(operation);

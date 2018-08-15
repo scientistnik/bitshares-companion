@@ -1,6 +1,9 @@
+import { Apis } from "bitsharesjs-ws";
+
 export default class operations {
 
-    static async generate(data, api, account_id) {
+    static async generate(data,  account_id) {
+        let api=Apis.instance();
         let op_type;
         let op_data;
         switch (data.action) {
