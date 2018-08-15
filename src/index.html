@@ -21,6 +21,7 @@
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
+        import store from './store/index.js';
         import router from './router/index.js';
         import {
             ipcRenderer,
@@ -29,10 +30,11 @@
 
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
-        console.log(router);
         const app = new Vue({
-            router
+            router,
+        //    store
         }).$mount('#app');
+
         app.$root.$data.ipc = ipcRenderer;
     </script>
 </body>
