@@ -19,7 +19,8 @@
     </div>
 </template>
 <script>
-import SecureLS from "secure-ls";
+
+import store from '../store/index.js';
 
 export default {
   name: "start",
@@ -33,6 +34,7 @@ export default {
       errorMsg: ""
     };
   },
+  store,
   mounted() {
     let wallets = JSON.parse(localStorage.getItem("wallets"));
     if (wallets && wallets.length > 0) {
@@ -42,25 +44,20 @@ export default {
   },
   methods: {
     unlockWallet() {
-      let ls = new SecureLS({
-        encodingType: "aes",
-        isCompression: true,
-        encryptionSecret: this.walletpass
-      });
-      try {
-        let wallet = ls.get(this.selectedWallet);
-
-        this.$root.$data.wallet = wallet;
-
-        this.$router.replace("/dashboard");
-        console.log("Password accepted!");
-      } catch (e) {
-        this.$data.passincorrect = "is-invalid";
-
-        this.$data.errorMsg = "Invalid Password.";
-        this.$refs.errorModal.show();
-        console.log("Error: Wrong Password");
-      }
+      console.log(store);
+      store
+        .dispatch("CompanionStore/getWallet", {
+          wallet_id: this.$data.selectedWallet,
+          wallet_pass: this.$data.walletpass
+        })
+        .then(response => {
+          this.$router.replace("/dashboard");
+        })
+        .catch(response => {
+          this.$data.passincorrect = "is-invalid";
+          this.$data.errorMsg = "Invalid Password.";
+          this.$refs.errorModal.show();
+        });
     }
   }
 };

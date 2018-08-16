@@ -3,7 +3,7 @@
 <div class="content">
             <div class="row mb-2">
                 <div class="col-12 text-center account py-2">
-                    {{this.$root.$data.wallet.accountName}} ({{this.$root.$data.wallet.accountID}})
+                    {{accountName}} ({{accountID}})
                 </div>
             </div>
             <Balances ref="balancetable"></Balances>
@@ -54,6 +54,7 @@
 
 <script>
 import CompanionServer from "../lib/CompanionServer";
+import store from '../store/index.js';
 import Operations from "../lib/Operations";
 import NodeSelect from "./node-select";
 import Balances from "./balances";
@@ -75,12 +76,20 @@ export default {
       specifics: ""
     };
   },
+  computed: {
+    accountName () {
+      return store.state.CompanionStore.wallet.accountName
+    },
+    accountID () {
+      return store.state.CompanionStore.wallet.accountID
+    }
+  },
   components: { NodeSelect, Balances },
   mounted() {
     this.$refs.loaderAnimModal.show();
     CompanionServer.initialize(this);
     CompanionServer.open();
-    console.log(this.$root.$data.wallet);
+    console.log(store.state.CompanionStore.wallet);
   },
   methods: {
     getBalances: async function() {
@@ -184,8 +193,8 @@ export default {
     allowAccess: function() {
       this.$refs.accountReqModal.hide();
       this.$data.incoming.accept({
-        account: this.$root.$data.wallet.accountName,
-        id: this.$root.$data.wallet.accountID
+        account: store.state.CompanionStore.wallet.accountName,
+        id: store.state.CompanionStore.wallet.accountID
       });
     },
     denyAccess: function() {
@@ -201,7 +210,7 @@ export default {
         );
         tr.set_required_fees().then(async () => {
           this.$refs.loaderAnimModal.show();
-          let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
+          let pKey = PrivateKey.fromWif(store.state.CompanionStore.wallet.keys.active);
           tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
           console.log("serialized transaction:", tr.serialize());
           let id = await tr.broadcast();
@@ -220,13 +229,13 @@ export default {
       let res = await this.$root.$data.api.init_promise;
       let operation = await Operations.generate(
         this.$data.incoming,
-        this.$root.$data.wallet.accountID
+        store.state.CompanionStore.wallet.accountID
       );
       console.log(operation);
       tr.add_type_operation(operation.op_type, operation.op_data);
       tr.set_required_fees().then(async () => {
         this.$refs.loaderAnimModal.show();
-        let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
+        let pKey = PrivateKey.fromWif(store.state.CompanionStore.wallet.keys.active);
         tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
         console.log("serialized transaction:", tr.serialize());
         let id = await tr.broadcast();

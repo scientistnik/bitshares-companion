@@ -22,7 +22,7 @@
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
         import store from './store/index.js';
-        import router from './router/index.js';
+        import router from './router/index.js';   
         import {
             ipcRenderer,
             remote
@@ -32,7 +32,7 @@
         Vue.use(VueRouter);
         const app = new Vue({
             router,
-        //    store
+            store
         }).$mount('#app');
 
         app.$root.$data.ipc = ipcRenderer;
